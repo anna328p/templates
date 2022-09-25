@@ -1,5 +1,5 @@
 {
-	name = "";
+	description = "TODO";
 
 	inputs = {
 		# nixpkgs.url = github:nixos/nixpkgs;
