@@ -3,25 +3,44 @@
 
 	inputs = {
 		# nixpkgs.url = github:nixos/nixpkgs;
-
-		flake-utils.url = github:numtide/flake-utils;
 	};
 
 	outputs = { self
 		, nixpkgs
 		, flake-utils
-	}: flake-utils.lib.eachDefaultSystem (system: let
-		pkgs = nixpkgs.legacyPackages.${system};
-		
-		pkgName = "TODO";
+	}: let
+		inherit (nixpkgs.lib) genAttrs systems;
 
-		pkg = pkgs.callPackage ./default.nix { };
-		shell = import ./shell.nix { inherit pkgs; };
+		# forEachSystem' : (Str -> Set Any) -> (Set Any -> Set Any) -> Set (Set Any)
+		forEachSystem' = env: body:
+			genAttrs (system: body (env system)) systems.flakeExposed;
+
+		env = system: rec {
+			inherit system;
+			pkgs = nixpkgs.legacyPackages.${system};
+
+			pkgName = "TODO";
+
+			pkg = pkgs.callPackage ./default.nix { };
+		};
+
+		forEachSystem = forEachSystem' env;
+
 	in {
-		packages.${pkgName} = pkg;
-		packages.default = pkg;
+		packages = forEachSystem (env: let
+			inherit (env) pkgName pkg;
+		in {
+			${pkgName} = pkg;
+			default = pkg;
+		});
 
-		devShells.${pkgName} = shell;
-		devShells.default = shell;
-	});
+		devShells = forEachSystem (env: let
+			inherit (env) pkgName pkgs pkg;
+
+			shell = import ./shell.nix { inherit pkgs pkg; };
+		in {
+			${pkgName} = shell;
+			default = shell;
+		});
+	};
 }

@@ -1,3 +1,6 @@
-{ pkgs ? import <nixpkgs> { } }:
+{ pkgs ? import <nixpkgs> { }
+, specialArgs ? { }
+, pkg ? pkgs.callPackage ./. specialArgs
+}:
 
-(pkgs.callPackage ./. { }).overrideAttrs (attrs: { })
+(pkg.override { }).overrideAttrs (attrs: { })

@@ -1,11 +1,21 @@
 { stdenv
+, lib
 ,
 }:
 
 stdenv.mkDerivation {
 	pname = "TODO";
-	version = "TODO";
+	version = "0";
 
-	nativeBuildInputs = [];
-	buildInputs = [];
+	nativeBuildInputs = [
+
+	];
+
+	buildInputs = [
+
+	];
+
+	meta = {
+		maintainers = [ lib.maintainers.anna328p ];
+	};
 }
