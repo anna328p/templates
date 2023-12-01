@@ -7,13 +7,12 @@
 
 	outputs = { self
 		, nixpkgs
-		, flake-utils
 	}: let
 		inherit (nixpkgs.lib) genAttrs systems;
 
 		# forEachSystem' : (Str -> Set Any) -> (Set Any -> Set Any) -> Set (Set Any)
 		forEachSystem' = env: body:
-			genAttrs (system: body (env system)) systems.flakeExposed;
+			genAttrs systems.flakeExposed (system: body (env system));
 
 		env = system: rec {
 			inherit system;
